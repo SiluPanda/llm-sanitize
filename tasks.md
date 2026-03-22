@@ -10,14 +10,14 @@
 ## Phase 2: Type Definitions (`src/types.ts`)
 
 - [ ] **Define PIIEntityType union type** — Define the union `'email' | 'phone' | 'ssn' | 'credit-card' | 'ip-address' | 'date-of-birth' | 'address' | 'name' | 'passport-id' | 'custom'`. | Status: not_done
-- [ ] **Define PIIConfidence type** — Define the union `'low' | 'medium' | 'high'`. | Status: not_done
+- [x] **Define PIIConfidence type** — Define the union `'low' | 'medium' | 'high'`. | Status: done
 - [ ] **Define PIIEntity interface** — Include `type`, `value`, `start`, `end`, `confidence`, optional `placeholder`, and optional `subtype` fields. | Status: not_done
 - [ ] **Define RedactionStrategy type** — Define the union `'placeholder' | 'mask' | 'hash' | 'fake' | 'remove' | 'encrypt'`. | Status: not_done
 - [ ] **Define RedactionConfig interface** — Include `default` strategy, optional `perEntity` overrides, and optional `encryptionKey` (Buffer). | Status: not_done
 - [ ] **Define PlaceholderMap interface** — Include `entries` (Record<string, string>), `counters` (Record<string, number>), and `createdAt` (number). | Status: not_done
 - [ ] **Define InputSanitizeOptions interface** — Include `entities` array, `redaction` config, `customEntities` array, and `sensitivity` level. | Status: not_done
 - [ ] **Define CustomEntityConfig interface** — Include `type`, `pattern` (RegExp), `placeholder`, optional `confidence`, and optional `description`. | Status: not_done
-- [ ] **Define SanitizedInput interface** — Include `text`, `entities` array, `placeholderMap`, `summary` record, and `durationMs`. | Status: not_done
+- [x] **Define SanitizedInput interface** — Include `text`, `entities` array, `placeholderMap`, `summary` record, and `durationMs`. | Status: done
 - [ ] **Define OutputSanitizeOptions interface** — Include `profanity`, `toxicity`, `harmfulInstructions`, `piiLeakage` configs, optional `policyEnforcer`, `actions` overrides, `fallbackMessage`, and optional `placeholderMap`. | Status: not_done
 - [ ] **Define ContentViolation interface** — Include `category`, `severity`, `matchedText`, `start`, `end`, and `description`. | Status: not_done
 - [ ] **Define SanitizedOutput interface** — Include `text`, `action`, `violations` array, `deanonymized` boolean, `placeholdersRestored` count, and `durationMs`. | Status: not_done
@@ -31,7 +31,7 @@
 ### Base Detector Infrastructure
 
 - [ ] **Implement base detector interface** — Create `src/input/detector.ts` with a base `PIIDetector` interface/abstract class defining `detect(text: string): PIIEntity[]`. Include shared utilities for regex matching with position tracking. | Status: not_done
-- [ ] **Implement entity deduplication** — Create `src/input/dedup.ts` implementing overlap resolution: when multiple detectors flag overlapping ranges, keep the detection with higher confidence; if equal, prefer the more specific type. | Status: not_done
+- [x] **Implement entity deduplication** — Create `src/input/dedup.ts` implementing overlap resolution: when multiple detectors flag overlapping ranges, keep the detection with higher confidence; if equal, prefer the more specific type. | Status: done
 
 ### Individual Detectors
 
@@ -39,18 +39,18 @@
 - [ ] **Implement phone detector** — Create `src/input/phone.ts`. Multiple patterns: US (with/without +1), UK (+44, local 0xxxx), international (+CC format). Require at least 7 digits. Exclude bare digit sequences, ZIP codes, short numerics. Confidence: high. | Status: not_done
 - [ ] **Implement SSN detector** — Create `src/input/ssn.ts`. Pattern: `\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b`. Add validation: no 000/666/900-999 area, no 00 group, no 0000 serial, exclude known invalid SSNs (078-05-1120). Context-boost: if "SSN", "social security", "social" nearby, confidence = high; else medium. | Status: not_done
 - [ ] **Implement credit card detector** — Create `src/input/credit-card.ts`. Patterns for Visa, Mastercard (5xxx and 2xxx series), Amex, Discover. Implement Luhn algorithm validation. Only classify numbers passing Luhn check. Confidence: high. | Status: not_done
-- [ ] **Implement Luhn algorithm** — Implement the Luhn checksum within `src/input/credit-card.ts`: double every second digit from right, subtract 9 if >9, sum all, check divisibility by 10. | Status: not_done
+- [x] **Implement Luhn algorithm** — Implement the Luhn checksum within `src/input/credit-card.ts`: double every second digit from right, subtract 9 if >9, sum all, check divisibility by 10. | Status: done
 - [ ] **Implement IP address detector** — Create `src/input/ip-address.ts`. Patterns: IPv4 (validate 0-255 octets), IPv6 (full and compressed forms). Optionally exclude localhost, broadcast, and private ranges via config. Confidence: high. | Status: not_done
 - [ ] **Implement date of birth detector** — Create `src/input/date-of-birth.ts`. Patterns: US (MM/DD/YYYY), EU (DD.MM.YYYY), ISO 8601 (YYYY-MM-DD), written (Month DD, YYYY). Context analysis within 50-char window: high confidence with "born"/"DOB"/"birthday" etc., medium if preceded by name-like pattern and date >10 years ago, low without context cues. | Status: not_done
 - [ ] **Implement address detector** — Create `src/input/address.ts`. Heuristic pattern matching for US/UK addresses: street number + street name + street type suffix. Optional unit, city, state, ZIP components that increase confidence. Minimum match: number + name + type. | Status: not_done
 - [ ] **Implement name detector** — Create `src/input/name.ts`. Heuristic: sequences of 2-4 capitalized words not starting a sentence. Exclude known proper nouns (countries, cities, companies, months, days). Context cues: titles (Mr./Mrs./Dr.), "name", "by", "from", "signed". Disabled by default. High confidence with title, medium with context, low with capitalization only. | Status: not_done
 - [ ] **Implement passport/ID detector** — Create `src/input/passport-id.ts`. Pre-configured patterns (US: letter+8 digits, UK: 9 digits, EU generic: 1-2 letters + 6-8 digits). All disabled by default; enabled via config with country selection. Require context cues ("passport", "ID number") within 30 chars. | Status: not_done
-- [ ] **Implement custom entity detector** — Create `src/input/custom.ts`. Accept user-defined regex patterns with type, placeholder prefix, confidence, and description. Evaluate after built-in detectors. Deduplicate against built-in matches. | Status: not_done
+- [x] **Implement custom entity detector** — Create `src/input/custom.ts`. Accept user-defined regex patterns with type, placeholder prefix, confidence, and description. Evaluate after built-in detectors. Deduplicate against built-in matches. | Status: done
 
 ### Input Pipeline
 
-- [ ] **Implement input sanitization pipeline** — Create `src/input/index.ts`. Orchestrate: (1) extract text, (2) run all enabled detectors, (3) deduplicate/resolve overlaps, (4) apply redaction strategies, (5) build placeholder map, (6) return `SanitizedInput`. | Status: not_done
-- [ ] **Implement sensitivity filtering** — In the input pipeline, filter detected entities by confidence based on sensitivity level: `low` = high-confidence only, `medium` = high+medium, `high` = all. Default: medium. | Status: not_done
+- [x] **Implement input sanitization pipeline** — Create `src/input/index.ts`. Orchestrate: (1) extract text, (2) run all enabled detectors, (3) deduplicate/resolve overlaps, (4) apply redaction strategies, (5) build placeholder map, (6) return `SanitizedInput`. | Status: done
+- [x] **Implement sensitivity filtering** — In the input pipeline, filter detected entities by confidence based on sensitivity level: `low` = high-confidence only, `medium` = high+medium, `high` = all. Default: medium. | Status: done
 
 ## Phase 4: Redaction Strategies (`src/redaction/`)
 
@@ -69,7 +69,7 @@
 - [ ] **Implement profanity detector** — Create `src/output/profanity.ts`. Word list matching with case-insensitive, word-boundary-anchored patterns. Handle Scunthorpe problem via exclusion list. Support custom word additions and exclusions. Default severity: low. Default action: warn. | Status: not_done
 - [ ] **Implement toxicity detector** — Create `src/output/toxicity.ts`. Pattern matching for: hate speech indicators ("all {group} are", "{group} should be", "I hate {group}" with protected group terms), personal attacks ("you are a/an {insult}"), threats ("I will {harm-verb} you", "you deserve to {harm}"). Severity: medium for personal attacks, high for hate speech and threats. | Status: not_done
 - [ ] **Implement harmful instruction detector** — Create `src/output/harmful.ts`. Detect combination of instructional language ("how to", "step 1", "first you need to", "ingredients:", "materials:") in proximity to dangerous topic keywords (self-harm, weapons, explosives, drugs, hacking, fraud). Severity: high. Default action: block. | Status: not_done
-- [ ] **Implement PII leakage detector** — Create `src/output/pii-leakage.ts`. Run PII detectors on output text. Compare against placeholder map: if detected PII matches a placeholder map entry, it is expected (not leakage). If detected PII was not in original input, flag as leakage. Severity: medium for emails/phones, high for SSNs/credit cards. Default action: warn for emails/phones, block for SSNs/credit cards. | Status: not_done
+- [x] **Implement PII leakage detector** — Create `src/output/pii-leakage.ts`. Run PII detectors on output text. Compare against placeholder map: if detected PII matches a placeholder map entry, it is expected (not leakage). If detected PII was not in original input, flag as leakage. Severity: medium for emails/phones, high for SSNs/credit cards. Default action: warn for emails/phones, block for SSNs/credit cards. | Status: done
 - [ ] **Implement output sanitization pipeline** — Create `src/output/index.ts`. Orchestrate: (1) extract response text, (2) run all enabled content detectors in parallel, (3) run PII leakage detection, (4) aggregate violations, (5) determine highest severity, (6) compute overall action (pass/warn/block), (7) apply action (replace with fallback if blocked, attach violations if warned), (8) de-anonymize if enabled. | Status: not_done
 - [ ] **Implement severity-to-action mapping** — Support configurable action overrides per severity level. Defaults: low = pass, medium = warn, high = block. Allow per-category action overrides to take precedence over severity defaults. | Status: not_done
 - [ ] **Implement fallback message** — When action is `block`, replace response content with configurable fallback message. Default: `"The response was blocked by the content safety filter."` | Status: not_done
@@ -77,10 +77,10 @@
 
 ## Phase 6: De-anonymization (`src/deanonymize.ts`)
 
-- [ ] **Implement placeholder restoration** — Scan response text for all placeholder strings from the map. Replace with original values. Process in order of longest placeholder first to prevent partial matches. Replace all occurrences of each placeholder. | Status: not_done
+- [x] **Implement placeholder restoration** — Scan response text for all placeholder strings from the map. Replace with original values. Process in order of longest placeholder first to prevent partial matches. Replace all occurrences of each placeholder. | Status: done
 - [ ] **Handle partial/variant mentions** — Implement case-insensitive matching with optional bracket tolerance for LLM variations (e.g., `EMAIL_1` without brackets, `[Email_1]` with different casing). | Status: not_done
-- [ ] **Return de-anonymization report** — Track and return which placeholders were found and restored, and how many replacements were made. | Status: not_done
-- [ ] **Implement deanonymize toggle** — Respect the `deanonymize` config option: when `false`, skip de-anonymization entirely and return the redacted response as-is. Default: `true`. | Status: not_done
+- [x] **Return de-anonymization report** — Track and return which placeholders were found and restored, and how many replacements were made. | Status: done
+- [x] **Implement deanonymize toggle** — Respect the `deanonymize` config option: when `false`, skip de-anonymization entirely and return the redacted response as-is. Default: `true`. | Status: done
 
 ## Phase 7: Configuration (`src/config.ts`)
 
@@ -94,9 +94,9 @@
 - [ ] **Implement Sanitizer class** — Create `src/sanitizer.ts`. Accept `SanitizerConfig`. Store resolved configuration. Expose `sanitizeInput()`, `sanitizeOutput()`, `detectPII()`, and `wrap()` methods. | Status: not_done
 - [ ] **Wire sanitizeInput method** — Delegate to the input pipeline with the configured options. Fire `onInputSanitized` event hook after sanitization. Return `SanitizedInput`. | Status: not_done
 - [ ] **Wire sanitizeOutput method** — Delegate to the output pipeline with the configured options. Accept optional `PlaceholderMap` for PII leakage comparison and de-anonymization. Fire `onOutputSanitized` event hook. Fire `onViolation` for each violation. Return `SanitizedOutput`. | Status: not_done
-- [ ] **Wire detectPII method** — Delegate to the detection phase of the input pipeline only (no redaction). Return `PIIEntity[]`. | Status: not_done
+- [x] **Wire detectPII method** — Delegate to the detection phase of the input pipeline only (no redaction). Return `PIIEntity[]`. | Status: done
 - [ ] **Implement wrap method** — Delegate to the middleware module for SDK client wrapping. Auto-detect provider. Return a proxied client with the same type. | Status: not_done
-- [ ] **Implement timing** — Use `performance.now()` to measure `durationMs` for both input and output sanitization. | Status: not_done
+- [x] **Implement timing** — Use `performance.now()` to measure `durationMs` for both input and output sanitization. | Status: done
 
 ## Phase 9: Middleware Wrapper (`src/middleware.ts`)
 
@@ -110,12 +110,12 @@
 
 - [ ] **Implement sanitizeFunction** — Create wrapper for any `(input: string) => Promise<string>` async function. Pre-call: sanitize input. Call: forward sanitized string. Post-call: sanitize output with placeholder map, de-anonymize, return sanitized result. | Status: not_done
 - [ ] **Export sanitize function** — Public API: `sanitize(client, options?)`. Delegate to `createSanitizer()` internally, then call `wrap()` on the sanitizer. | Status: not_done
-- [ ] **Export sanitizeInput function** — Public API: `sanitizeInput(text, options?)`. Create a one-off sanitizer and call `sanitizeInput()`. | Status: not_done
-- [ ] **Export sanitizeOutput function** — Public API: `sanitizeOutput(text, options?)`. Create a one-off sanitizer and call `sanitizeOutput()`. | Status: not_done
-- [ ] **Export detectPII function** — Public API: `detectPII(text, options?)`. Create a one-off sanitizer and call `detectPII()`. | Status: not_done
-- [ ] **Export createSanitizer function** — Public API: `createSanitizer(config)`. Return a `Sanitizer` instance. | Status: not_done
+- [x] **Export sanitizeInput function** — Public API: `sanitizeInput(text, options?)`. Create a one-off sanitizer and call `sanitizeInput()`. | Status: done
+- [x] **Export sanitizeOutput function** — Public API: `sanitizeOutput(text, options?)`. Create a one-off sanitizer and call `sanitizeOutput()`. | Status: done
+- [x] **Export detectPII function** — Public API: `detectPII(text, options?)`. Create a one-off sanitizer and call `detectPII()`. | Status: done
+- [x] **Export createSanitizer function** — Public API: `createSanitizer(config)`. Return a `Sanitizer` instance. | Status: done
 - [ ] **Export decryptPII utility** — Public API: `decryptPII(encryptedValue, key)`. AES-256-GCM decryption for the `encrypt` strategy. | Status: not_done
-- [ ] **Export all types** — Re-export all TypeScript interfaces and type definitions from `types.ts`. | Status: not_done
+- [x] **Export all types** — Re-export all TypeScript interfaces and type definitions from `types.ts`. | Status: done
 
 ## Phase 11: Streaming Support (`src/streaming.ts`)
 
