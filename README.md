@@ -3,6 +3,7 @@
 Bidirectional I/O sanitizer middleware for LLM applications.
 
 [![npm version](https://img.shields.io/npm/v/llm-sanitize.svg)](https://www.npmjs.com/package/llm-sanitize)
+[![npm downloads](https://img.shields.io/npm/dt/llm-sanitize.svg)](https://www.npmjs.com/package/llm-sanitize)
 [![license](https://img.shields.io/npm/l/llm-sanitize.svg)](https://github.com/SiluPanda/llm-sanitize/blob/master/LICENSE)
 [![node](https://img.shields.io/node/v/llm-sanitize.svg)](https://nodejs.org)
 
